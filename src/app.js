@@ -12,9 +12,7 @@ app.use(compression())
 //init db
 require('../src/dbs/init.mongo')
 //init routes
-app.get('/',(req,res,next)=>{
-    res.status(200).json({message: "Welcome to my app"})
-})
+require('../src/routes/index')(app);
 //init error handler
 
 module.exports = app;
