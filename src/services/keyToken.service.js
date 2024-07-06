@@ -1,3 +1,4 @@
+const { token } = require('morgan');
 const keyTokenModel = require('../models/keyToken.model');
 
 class  KeyTokenService {
@@ -8,7 +9,7 @@ class  KeyTokenService {
                 user: userId,
                 publicKey:publicKeyString
             });
-            return tokens ? publicKeyString : null;
+            return tokens ? tokens.publicKey : null;
         } catch (error) {
             return error
         }

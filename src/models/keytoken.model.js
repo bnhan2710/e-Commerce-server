@@ -1,4 +1,4 @@
-const {Schema, model} = require('mongoose'); // Erase if already required
+const {Schema, model} = require('mongoose'); 
 const { collection } = require('./shop.model');
 const mongoose = require('mongoose');
 const DOCUMENT_NAME = 'Key';

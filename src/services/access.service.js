@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const KeyTokenService = require('./keyToken.service');
 const authUtils = require('../auth/authUtils');
+const {getInfoData} = require('../utils/index')
 const RoleShop = {
     ADMIN: '0000',//0000 is the role for admin
     SHOP: '0001',//0001 is the default role for shop
@@ -10,7 +11,6 @@ const RoleShop = {
     EDITOR: '0003',//0003 is the role for editor
 }
 class AccessService {
-
 
     static signUp = async ({name, email, password}) => {
         try {
@@ -32,10 +32,20 @@ class AccessService {
                 //created privateKey, publicKey
                 const {privateKey,publicKey} = crypto.generateKeyPairSync('rsa',{
                     modulusLength: 4096,
-
+                    publicKeyEncoding: {
+                        type: 'pkcs1',
+                        format: 'pem'
+                    },
+                    privateKeyEncoding: {
+                        type: 'pkcs1',
+                        format: 'pem',
+                      },
+                    
                 })
+
                 console.log('privateKey:', privateKey);
                 console.log('publicKey:', publicKey);
+                
                 //save privateKey, publicKey collection KeyStore
                  const publicKeyString = await KeyTokenService.createKeyToken(
                     {userId: newShop._id, 
@@ -48,17 +58,22 @@ class AccessService {
                         status: 'error'
                     }
                 }
+
+                const publicKeyObject = crypto.createPublicKey( publicKeyString )
+
+                //created token pair
                 const tokens =  await authUtils.createTokenPair(
                     {userId: newShop._id,email},
-                    publicKey,
+                    publicKeyString,
                     privateKey
                 );
+                
                 console.log('Created Token Success::', tokens);
 
                 return {
                     code: 201,
                     metadata: {
-                        shop : newShop,
+                        shop : getInfoData({fileds: ['_id','name','email'],object: newShop}),
                         tokens
                     }
                 }
