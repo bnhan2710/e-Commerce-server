@@ -1,7 +1,8 @@
 const shopModel = require('../models/shop.model');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
-
+const KeyTokenService = require('./keyToken.service');
+const authUtils = require('../auth/authUtils');
 const RoleShop = {
     ADMIN: '0000',//0000 is the role for admin
     SHOP: '0001',//0001 is the default role for shop
@@ -36,6 +37,31 @@ class AccessService {
                 console.log('privateKey:', privateKey);
                 console.log('publicKey:', publicKey);
                 //save privateKey, publicKey collection KeyStore
+                 const publicKeyString = await KeyTokenService.createKeyToken(
+                    {userId: newShop._id, 
+                    publicKey
+                });
+                if(!publicKeyString){
+                    return {
+                        code: 'xxxx',
+                        message: 'Error creating publicKey',
+                        status: 'error'
+                    }
+                }
+                const tokens =  await authUtils.createTokenPair(
+                    {userId: newShop._id,email},
+                    publicKey,
+                    privateKey
+                );
+                console.log('Created Token Success::', tokens);
+
+                return {
+                    code: 201,
+                    metadata: {
+                        shop : newShop,
+                        tokens
+                    }
+                }
             }
         }catch (error) {
            return { code: 'xxx',
