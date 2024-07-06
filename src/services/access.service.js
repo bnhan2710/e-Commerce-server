@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const KeyTokenService = require('./keyToken.service');
 const authUtils = require('../auth/authUtils');
+const {getInfoData} = require('../utils/index')
 const RoleShop = {
     ADMIN: '0000',//0000 is the role for admin
     SHOP: '0001',//0001 is the default role for shop
@@ -72,7 +73,7 @@ class AccessService {
                 return {
                     code: 201,
                     metadata: {
-                        shop : newShop,
+                        shop : getInfoData({fileds: ['_id','name','email'],object: newShop}),
                         tokens
                     }
                 }
