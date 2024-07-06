@@ -11,7 +11,6 @@ const RoleShop = {
 }
 class AccessService {
 
-
     static signUp = async ({name, email, password}) => {
         try {
             //check if email already exists
@@ -32,10 +31,20 @@ class AccessService {
                 //created privateKey, publicKey
                 const {privateKey,publicKey} = crypto.generateKeyPairSync('rsa',{
                     modulusLength: 4096,
-
+                    publicKeyEncoding: {
+                        type: 'pkcs1',
+                        format: 'pem'
+                    },
+                    privateKeyEncoding: {
+                        type: 'pkcs1',
+                        format: 'pem',
+                      },
+                    
                 })
+
                 console.log('privateKey:', privateKey);
                 console.log('publicKey:', publicKey);
+                
                 //save privateKey, publicKey collection KeyStore
                  const publicKeyString = await KeyTokenService.createKeyToken(
                     {userId: newShop._id, 
@@ -48,11 +57,16 @@ class AccessService {
                         status: 'error'
                     }
                 }
+
+                const publicKeyObject = crypto.createPublicKey( publicKeyString )
+
+                //created token pair
                 const tokens =  await authUtils.createTokenPair(
                     {userId: newShop._id,email},
-                    publicKey,
+                    publicKeyString,
                     privateKey
                 );
+                
                 console.log('Created Token Success::', tokens);
 
                 return {
