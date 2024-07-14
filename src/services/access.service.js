@@ -43,8 +43,8 @@ class AccessService {
                     
                 })
 
-                console.log('privateKey:', privateKey);
-                console.log('publicKey:', publicKey);
+                // console.log('privateKey:', privateKey);
+                // console.log('publicKey:', publicKey);
                 
                 //save privateKey, publicKey collection KeyStore
                  const publicKeyString = await KeyTokenService.createKeyToken(
@@ -60,15 +60,15 @@ class AccessService {
                 }
 
                 const publicKeyObject = crypto.createPublicKey( publicKeyString )
-
+                
                 //created token pair
                 const tokens =  await authUtils.createTokenPair(
                     {userId: newShop._id,email},
-                    publicKeyString,
+                    publicKeyObject,
                     privateKey
                 );
                 
-                console.log('Created Token Success::', tokens);
+                // console.log('Created Token Success::', tokens);
 
                 return {
                     code: 201,

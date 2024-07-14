@@ -4,7 +4,7 @@ const express = require('express');
 const app = express();
 const {default : helmet} = require('helmet')
 const morgan = require('morgan');
-const mongodb =
+
 //init middleware
 app.use(morgan("dev"))
 app.use(helmet())
