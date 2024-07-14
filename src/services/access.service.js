@@ -3,7 +3,8 @@ const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const KeyTokenService = require('./keyToken.service');
 const authUtils = require('../auth/authUtils');
-const {getInfoData} = require('../utils/index')
+const {getInfoData} = require('../utils/index');
+const { BadRequestError, ConflictRequestError } = require('../core/error.response');
 const RoleShop = {
     ADMIN: '0000',//0000 is the role for admin
     SHOP: '0001',//0001 is the default role for shop
@@ -13,19 +14,15 @@ const RoleShop = {
 class AccessService {
 
     static signUp = async ({name, email, password}) => {
-        try {
+        // try {
             //check if email already exists
             const holderShop = await shopModel.findOne({email}).lean()
             if(holderShop){
-                return { 
-                    code: 'xxxx',
-                    message: 'Shop already registered',
-                    status: 'error'
-               }
+                throw new BadRequestError('Error: Shop already registered!')
             }
+            //hash password
             const passwordHashed = await bcrypt.hash(password, 10);
             const newShop = await shopModel.create(
-
                 {name, email, password: passwordHashed,roles: [RoleShop.SHOP]}
             );
            if(newShop){
@@ -52,11 +49,7 @@ class AccessService {
                     publicKey
                 });
                 if(!publicKeyString){
-                    return {
-                        code: 'xxxx',
-                        message: 'Error creating publicKey',
-                        status: 'error'
-                    }
+                    throw new BadRequestError('Error: Shop already registered!')
                 }
 
                 const publicKeyObject = crypto.createPublicKey( publicKeyString )
@@ -78,12 +71,6 @@ class AccessService {
                     }
                 }
             }
-        }catch (error) {
-           return { code: 'xxx',
-            message: error.message,
-            status: 'error'
-           }
-        }
     }
 }
 

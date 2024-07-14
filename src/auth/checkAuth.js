@@ -31,7 +31,6 @@ const apiKey = async (req,res,next) =>{
 }
 
 const permission = (permission) => {
-    return () => {
         return (req,res,next) => {
             if(!req.objKey.permissions){
                 return res.status(403).json({
@@ -48,9 +47,15 @@ const permission = (permission) => {
 
             return next()
         }
+}
+
+const asyncHandler = fn => {
+   return (req, res, next) => {
+        fn(req,res,next).catch(next)
     }
 }
 module.exports = {
     apiKey,
-    permission
+    permission,
+    asyncHandler
 }
