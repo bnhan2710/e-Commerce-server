@@ -13,7 +13,11 @@ const RoleShop = {
     EDITOR: '0003',//0003 is the role for editor
 }
 class AccessService {
-
+    static logout = async (keyStore) =>{
+        const delKey = await KeyTokenService.removeKeyById(keyStore._id)
+        console.log(delKey)
+        return delKey
+    }
 
     static login = async ({ email, password, refreshToken = null }) => {
         //1.check email in dbs
@@ -86,7 +90,7 @@ class AccessService {
             })
 
             if (!keyStore) {
-                //throw new BadRequest('Error: Shop already registed!')
+                // throw new BadRequest('Error: Shop already registed!')
 
                 return {
                     code: 'xxxx',
